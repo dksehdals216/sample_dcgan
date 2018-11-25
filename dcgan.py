@@ -2,8 +2,9 @@
 
 from __future__ import print_function
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-plt.use('Agg')
 
 import time
 import numpy as np
@@ -144,9 +145,7 @@ if __name__ == '__main__':
             if cuda_available:
                 zeros, ones = zeros.cuda(), ones.cuda()
                 
-            ############################
             # (1) Update Discriminator 
-            ############################
             
             # Sample z ~ N(0, 1)
             minibatch_noise = Variable(torch.from_numpy(
@@ -177,9 +176,7 @@ if __name__ == '__main__':
             optimizer_d.step()
 
             
-            ############################
             # (2) Update Generator
-            ############################
 
             # Zero gradients for the generator
             optimizer_g.zero_grad()
@@ -205,22 +202,28 @@ if __name__ == '__main__':
         print('Generator loss : %.3f' % (np.mean(minibatch_gen_losses)))
         print('Discriminator loss : %.3f' % (np.mean(minibatch_disc_losses)))
 
-        # Set generator in evaluation mode to use running means and averages for Batchnorm
-        generator.eval()
+    # Set generator in evaluation mode to use running means and averages for Batchnorm
+    generator.eval()
 
-        # Sample z ~ N(0, 1)
-        minibatch_noise = Variable(torch.from_numpy(
-            np.random.randn(16, z_dim, 1, 1).astype(np.float32)
-        ))
+    # Sample z ~ N(0, 1)
+    minibatch_noise = Variable(torch.from_numpy(
+        np.random.randn(16, z_dim, 1, 1).astype(np.float32)
+    ))
 
-        if cuda_available:
-            minibatch_noise = minibatch_noise.cuda()
+    if cuda_available:
+        minibatch_noise = minibatch_noise.cuda()
 
-        fakes = generator(minibatch_noise)
+    fakes = generator(minibatch_noise)
 
-        fig = plt.figure(figsize=(10, 10))
-        idx = 1
-        for ind, fake in enumerate(fakes):
-            fig.add_subplot(4, 4, ind + 1)
-            plt.imshow(fake.data.cpu().numpy().reshape(28, 28), cmap='gray')
-            plt.axis('off')
+    fig = plt.figure(figsize=(10, 10))
+    idx = 1
+    for ind, fake in enumerate(fakes):
+        fig.add_subplot(4, 4, ind + 1)
+        print(fake.data.cpu())
+        print(fake.data.cpu().numpy().reshape(28,28))
+        plt.imshow(fake.data.cpu().numpy().reshape(28, 28), cmap='gray')
+        plt.axis('off')
+
+
+
+
