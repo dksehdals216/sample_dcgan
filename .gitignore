@@ -1,0 +1,13 @@
+
+
+#ignore py generated files
+*.pyc
+
+
+#ignore swap files
+*.swp
+
+
+#ignore vim generated undo's
+*.un~
+
