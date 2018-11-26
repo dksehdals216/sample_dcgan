@@ -11,3 +11,9 @@
 #ignore vim generated undo's
 *.un~
 
+
+#result files
+*.png
+*.jpg
+*.zip
+
