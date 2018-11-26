@@ -28,7 +28,6 @@ mnist_train = torchvision.datasets.MNIST(root='./data', train=True, transform=mn
 trainloader = torch.utils.data.DataLoader(mnist_train, batch_size=64, shuffle=True, num_workers=2)
 
 class Generator(nn.Module):
-    """DCGAN Generator."""
     def __init__(self, z_dim=128, num_filters=32):
         super(Generator, self).__init__()
         self.z_dim = z_dim
@@ -68,7 +67,6 @@ class Generator(nn.Module):
         return torch.tanh(self.deconv4(x))
 
 class Discriminator(nn.Module):
-    """DCGAN Generator."""
     def __init__(self, num_filters=32):
         super(Discriminator, self).__init__()
         self.num_filters = num_filters
@@ -129,7 +127,7 @@ if __name__ == '__main__':
     minibatch_disc_losses = []
     minibatch_gen_losses = []
 
-    for epoch in range(50):
+    for epoch in range(1):
         losses = []
         # Train
         for batch_idx, (inputs, targets) in enumerate(trainloader):
@@ -222,7 +220,7 @@ if __name__ == '__main__':
         plt.imshow(fake.data.cpu().numpy().reshape(28, 28), cmap='gray')
         plt.axis('off')
         plt.show()
-        plt.save(str(fake) + '.png')
+    plt.savefig('result.png')
 
 
 
