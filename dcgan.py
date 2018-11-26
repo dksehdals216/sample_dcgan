@@ -219,10 +219,11 @@ if __name__ == '__main__':
     idx = 1
     for ind, fake in enumerate(fakes):
         fig.add_subplot(4, 4, ind + 1)
-        print(fake.data.cpu())
-        print(fake.data.cpu().numpy().reshape(28,28))
         plt.imshow(fake.data.cpu().numpy().reshape(28, 28), cmap='gray')
         plt.axis('off')
+        plt.show()
+        plt.save(str(fake) + '.png')
+
 
 
 
