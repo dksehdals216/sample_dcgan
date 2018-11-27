@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 import time
 import numpy as np
+import argparse
 
 import torch
 import torch.nn as nn
@@ -106,19 +107,24 @@ class Discriminator(nn.Module):
 
 if __name__ == '__main__':
 
-    cuda_available = torch.cuda.is_available()
+    parser = argparse.ArgumentParser(description="Run dcgan with parameters")
+    parser.add_argument('-lr', '--learning_rate', help="Learning rate value", default=2e-4)
+    parser.add_argument('-ep', '--epoch', help="epoch value", default=50)
+    args = parser.parse_args()
     
-
     generator = Generator()
     discriminator = Discriminator()
+
+    cuda_available = torch.cuda.is_available()
 
     if cuda_available:
         generator = generator.cuda()
         discriminator = discriminator.cuda()
 
+    #Binary Cross Entropy, 
     loss = nn.BCELoss()
-    optimizer_g = torch.optim.Adam(generator.parameters(), lr=2e-4)
-    optimizer_d = torch.optim.Adam(discriminator.parameters(), lr=2e-4) 
+    optimizer_g = torch.optim.Adam(generator.parameters(), lr=args.learning_rate)
+    optimizer_d = torch.optim.Adam(discriminator.parameters(), lr=args.learning_rate)
 
 
     ctr = 0
@@ -127,7 +133,7 @@ if __name__ == '__main__':
     minibatch_disc_losses = []
     minibatch_gen_losses = []
 
-    for epoch in range(1):
+    for epoch in range(args.epoch):
         losses = []
         # Train
         for batch_idx, (inputs, targets) in enumerate(trainloader):
