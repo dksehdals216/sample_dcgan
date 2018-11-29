@@ -235,6 +235,8 @@ if __name__ == '__main__':
 
     fakes = generator(minibatch_noise)
 
+    timestr = time.strftime('%Y%m%d')
+
     fig = plt.figure(figsize=(10, 10))
     idx = 1
     for ind, fake in enumerate(fakes):
@@ -242,7 +244,7 @@ if __name__ == '__main__':
         plt.imshow(fake.data.cpu().numpy().reshape(28, 28), cmap='gray')
         plt.axis('off')
         plt.show()
-    plt.savefig('result.png')
+    plt.savefig('./results/' + timestr + 'result.png')
 
 
 
