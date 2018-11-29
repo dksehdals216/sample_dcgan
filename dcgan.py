@@ -3,6 +3,8 @@
 from __future__ import print_function
 
 import matplotlib
+
+#matplotlib fix for imshow 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -29,10 +31,14 @@ mnist_train = torchvision.datasets.MNIST(root='./data', train=True, transform=mn
 trainloader = torch.utils.data.DataLoader(mnist_train, batch_size=64, shuffle=True, num_workers=2)
 
 class Generator(nn.Module):
+
     def __init__(self, z_dim=128, num_filters=32):
+
         super(Generator, self).__init__()
         self.z_dim = z_dim
         self.num_filters = num_filters
+
+        ## Deconvoluting layers
         
         # 1 x 1 -> 4 x 4
         self.deconv1 = nn.ConvTranspose2d(
@@ -62,15 +68,22 @@ class Generator(nn.Module):
         )
         
     def forward(self, x):
+
         x = F.relu(self.bn1(self.deconv1(x)))
         x = F.relu(self.bn2(self.deconv2(x)))
         x = F.relu(self.bn3(self.deconv3(x)))
+
         return torch.tanh(self.deconv4(x))
 
 class Discriminator(nn.Module):
+
     def __init__(self, num_filters=32):
+
         super(Discriminator, self).__init__()
         self.num_filters = num_filters
+
+        ## Convoluting layers
+
         # 28 x 28 -> 14 x 14
         self.conv1 = nn.Conv2d(
             in_channels=1, out_channels=num_filters,
@@ -99,17 +112,19 @@ class Discriminator(nn.Module):
         )
 
     def forward(self, x):
+        
         x = F.leaky_relu(self.bn1(self.conv1(x)), 0.2)
         x = F.leaky_relu(self.bn2(self.conv2(x)), 0.2)
         x = F.leaky_relu(self.bn3(self.conv3(x)), 0.2)
+
         return torch.sigmoid(self.conv4(x)).squeeze()
 
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Run dcgan with parameters")
-    parser.add_argument('-lr', '--learning_rate', help="Learning rate value", default=2e-4)
-    parser.add_argument('-ep', '--epoch', help="epoch value", default=50)
+    parser.add_argument('-lr', '--learning_rate', type=int, help="Learning rate value", default=2e-4)
+    parser.add_argument('-ep', '--epoch', type=int, help="epoch value", default=50)
     args = parser.parse_args()
     
     generator = Generator()
@@ -121,7 +136,8 @@ if __name__ == '__main__':
         generator = generator.cuda()
         discriminator = discriminator.cuda()
 
-    #Binary Cross Entropy, 
+    # Binary Cross Entropy
+    # We use BCE since both networks are trained by the same loss, which is the same as BCE Entropy of the output of the discriminator. Both Generator and Discriminator will try minimize and maximize it respectively. 
     loss = nn.BCELoss()
     optimizer_g = torch.optim.Adam(generator.parameters(), lr=args.learning_rate)
     optimizer_d = torch.optim.Adam(discriminator.parameters(), lr=args.learning_rate)
