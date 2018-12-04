@@ -218,7 +218,8 @@ if __name__ == '__main__':
             optimizer_g.step()
 
             minibatch_gen_losses.append(g_loss.item())
-        
+
+        print('Epoch: %.1f' % (epoch+1))
         print('Generator loss : %.3f' % (np.mean(minibatch_gen_losses)))
         print('Discriminator loss : %.3f' % (np.mean(minibatch_disc_losses)))
 
@@ -235,7 +236,7 @@ if __name__ == '__main__':
 
     fakes = generator(minibatch_noise)
 
-    timestr = time.strftime('%Y%m%d')
+    timestr = time.strftime('%Y%m%d%M')
 
     fig = plt.figure(figsize=(10, 10))
     idx = 1
@@ -244,7 +245,7 @@ if __name__ == '__main__':
         plt.imshow(fake.data.cpu().numpy().reshape(28, 28), cmap='gray')
         plt.axis('off')
         plt.show()
-    plt.savefig('./results/' + timestr + 'result.png')
+    plt.savefig('./results/' + str(epoch + 1) + '_' + timestr + 'result.png')
 
 
 
